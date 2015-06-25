@@ -1,10 +1,10 @@
-lightweight tag 8c23941ec38235714a726ce9959278c314277f66 v0.13.1
+lightweight tag 2463aa36db619ba793624a7f1424325a62ce4e68 v0.13.2
 Author:	vince <chuckystar@gmail.com>
-Date:	Wed May 6 18:52:53 2015 +0200
+Date:	Thu May 28 04:37:15 2015 +0200
 
-commit 8c23941ec38235714a726ce9959278c314277f66
+commit 2463aa36db619ba793624a7f1424325a62ce4e68
 Author: vince <chuckystar@gmail.com>
-Date:   Wed May 6 18:52:53 2015 +0200
+Date:   Thu May 28 04:37:15 2015 +0200
 
-    drop 5
+    Added alternate way of sharing group layouts via group chat
 
