@@ -250,7 +250,7 @@ function VinceRaidFrames:ICCommSetup()
 	--Print("in ICCommSetup")
 	if not self.channel then
 		--Print("enter channel setup")
-		self.channel = ICCommLib.JoinChannel("VRFrame", ICCommLib.CodeEnumICCommChannelType.Group)
+		self.channel = ICCommLib.JoinChannel("CRFrame", ICCommLib.CodeEnumICCommChannelType.Group)
 		--Print("channel done setup")
 	end
 	
