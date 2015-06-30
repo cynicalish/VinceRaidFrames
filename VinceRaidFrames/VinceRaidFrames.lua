@@ -935,15 +935,20 @@ end
 --end
 
 function VinceRaidFrames:ValidateGroups(groups)
+	--Print("in validate")
 	if type(groups) ~= "table" or #groups < 1 then
 		return false
 	end
+	--Print("before for loop")
 	for i, group in ipairs(groups) do
-		if type(group) ~= "table" or type(group.name) ~= "string" or type(group.members) ~= "table" then
+		if type(group) ~= "table" or (type(group.name) ~= "string" and type(group.name) ~= "number") or type(group.members) ~= "table" then
+			--Print(type(group))
+			--Print(type(group.name))
 			return false
 		end
 		for j, name in ipairs(group.members) do
-			if type(name) ~= "string" then
+			if type(name) ~= "string" and type(name) ~= "number" then
+				--Print(type(name))
 				return false
 			end
 		end
@@ -961,18 +966,19 @@ function VinceRaidFrames:ShareGroupLayout()
 		self:ICCommSetup()
 		return
 	end
+	--Print("in Share")
 	if not self.settings.groups then return end
 	
 	local str = {}
-	local memberNameToId = self:MapMemberNamesToId()
-	
+	local memberNameToId, idToMemberName = self:MapMemberNamesToId()
+		
 	for i, group in ipairs(self.settings.groups) do
 		tinsert(str, group.name)
 		for j, name in ipairs(group.members) do
 			tinsert(str, memberNameToId[name])
 		end
 	end
-	
+	--Print("Msg sent")
 	self.channel:SendMessage(self.Utilities.Serialize(str))
 end
 
@@ -1016,6 +1022,7 @@ function VinceRaidFrames:Decode(str)
 end
 
 function VinceRaidFrames:OnICCommMessageReceived(channel, strMessage, idMessage)
+	--Print("Iccomm msg recieved")
 	log("received from " .. tostring(idMessage))
 	local message = self:Decode(strMessage)
 	if type(message) ~= "table" then
@@ -1035,8 +1042,7 @@ function VinceRaidFrames:OnICCommMessageReceived(channel, strMessage, idMessage)
 		end
 		return
 	end
-	if self:IsLeader(idMessage) and self:ValidateGroups(message) then
-		Print("layout setup triggered")
+	if self:IsLeader(idMessage) then
 		self:ImportGroupLayoutFromPartyChat(strMessage)
 	end
 end
