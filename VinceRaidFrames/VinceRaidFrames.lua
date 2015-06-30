@@ -962,7 +962,17 @@ function VinceRaidFrames:ShareGroupLayout()
 		return
 	end
 	
-	self.channel:SendMessage(self.Utilities.Serialize(self.settings.groups))
+	local str = {}
+	local memberNameToId = self:MapMemberNamesToId()
+	
+	for i, group in ipairs(self.settings.groups) do
+		tinsert(str, group.name)
+		for j, name in ipairs(group.members) do
+			tinsert(str, memberNameToId[name])
+		end
+	end
+	
+	self.channel:SendMessage(self.Utilities.Serialize(str))
 end
 
 function VinceRaidFrames:IsUniqueGroupName(name)
@@ -1025,8 +1035,7 @@ function VinceRaidFrames:OnICCommMessageReceived(channel, strMessage, idMessage)
 		return
 	end
 	if self:IsLeader(idMessage) and self:ValidateGroups(message) then
-		self.settings.groups = message
-		self:ArrangeMembers()
+		ImportGroupLayoutFromPartyChat(strMessage)
 	end
 end
 
