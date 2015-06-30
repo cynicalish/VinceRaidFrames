@@ -961,6 +961,7 @@ function VinceRaidFrames:ShareGroupLayout()
 		self:ICCommSetup()
 		return
 	end
+	if not self.settings.groups then return end
 	
 	local str = {}
 	local memberNameToId = self:MapMemberNamesToId()
@@ -1035,7 +1036,8 @@ function VinceRaidFrames:OnICCommMessageReceived(channel, strMessage, idMessage)
 		return
 	end
 	if self:IsLeader(idMessage) and self:ValidateGroups(message) then
-		ImportGroupLayoutFromPartyChat(strMessage)
+		Print("layout setup triggered")
+		self:ImportGroupLayoutFromPartyChat(strMessage)
 	end
 end
 
