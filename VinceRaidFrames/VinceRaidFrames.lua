@@ -94,7 +94,10 @@ function VinceRaidFrames:new(o)
 	o.channel = nil
 	o.icommtimer = nil
 	o.throttletimer = nil
+
 	-- files overwrite these
+	self.ttimerstarted = false
+	self.throttlemembers = {}
 	self.Options = nil
 	self.Member = nil
 	self.ContextMenu = nil
@@ -224,8 +227,11 @@ function VinceRaidFrames:OnLoad()
 	self.channel = nil
 	self.icommtimer = ApolloTimer.Create(1, true, "ICCommSetup", self)
 	
-	self.throttletimer = ApolloTimer.Create(3, false, "ShareGroupLayout", self)
+	self.throttletimer = ApolloTimer.Create(2, false, "OnThrottleTimer", self)
 	self.throttletimer:Stop()
+	
+	self.ttimerstarted = false
+	self.throttlemembers = {}
 	
 	local groupFrame = Apollo.GetAddon("GroupDisplay")
 	if groupFrame then
@@ -1046,12 +1052,32 @@ function VinceRaidFrames:OnICCommSendMessageResult(iccomm, eResult, idMessage)
 	if eResult == ICCommLib.CodeEnumICCommMessageResult.Throttled then
 		log("MESSAGE THROTTLED")
 		
-		self.channel:SendPrivateMessage(idMessage, self.Utilities.Serialize(self:GetGrpCode()))
+		table.insert(self.throttlemembers, idMessage)
+		
+		if not self.ttimerstarted then
+			self.ttimerstarted = true
+			self.throttletimer:Start()
+		end
+		--self.channel:SendPrivateMessage(idMessage, self.Utilities.Serialize(self:GetGrpCode()))
 	end
 end
 
 function VinceRaidFrames:OnICCommThrottled(iccomm, strSender, idMessage)
 	log("msg throttgled from " .. strSender .. ", msg: " .. tostring(idMessage))
+end
+
+function VinceRaidFrames:OnThrottleTimer()
+	self.ttimerstarted = false
+	if next(self.throttlemembers) == nil then return end
+	
+	grplayout = self:GetGrpCode()
+	for idx, throttled in ipairs(self.throttlemembers) do
+		if throttled then
+			self.channel:SendPrivateMessage(throttled, self.Utilities.Serialize(grplayout))
+		end
+	end
+	
+	self.throttlemembers = {}
 end
 
 function VinceRaidFrames:OnVarChange_FrameCount()
